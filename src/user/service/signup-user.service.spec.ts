@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import {
   SignUpUserOutboundPort,
   SignUpUserOutboundPortInputDto,
@@ -35,5 +36,26 @@ describe('signUpUserService test', () => {
     const result = await signUpUserService.excute(input);
 
     expect(result).toBe(void 0);
+  });
+
+  test('비밀번호 체크 실패', async () => {
+    const input = {
+      email: 'abcd@gmail.com',
+      userName: 'abcd',
+      password: 'abcd1234',
+      checkPassword: 'abcd12345',
+    };
+
+    const signUpUserService = new SignUpUserService(
+      new MockSignUpUserOutboundPort(),
+    );
+
+    expect(async () => {
+      await signUpUserService.excute(input);
+    }).rejects.toThrowError(
+      new BadRequestException({
+        message: '비밀번호와 비밀번호 확인 값이 일치하지 않습니다.',
+      }),
+    );
   });
 });
