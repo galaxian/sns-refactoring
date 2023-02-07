@@ -1,4 +1,4 @@
-import { Controller, Inject, Post } from '@nestjs/common';
+import { Body, Controller, Inject, Post } from '@nestjs/common';
 import {
   SignUpUserInboundPort,
   SignUpUserInboundPortInputDto,
@@ -13,7 +13,7 @@ export class SignUpUserController {
   ) {}
 
   @Post('/users/signup')
-  async handle(request: SignUpUserInboundPortInputDto) {
+  async handle(@Body() request: SignUpUserInboundPortInputDto) {
     this.signUpUserInboundPort.excute(request);
   }
 }
