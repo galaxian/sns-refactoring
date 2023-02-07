@@ -18,13 +18,14 @@ export class SignUpUserService implements SignUpUserInboundPort {
   async excute(
     params: SignUpUserInboundPortInputDto,
   ): Promise<SignUpUserInboundPortOutputDto> {
-    if (this.isPasswordValidate(params.password, params.checkPassword)) {
+    const { email, userName, password, checkPassword } = params;
+    if (this.isPasswordValidate(password, checkPassword)) {
       throw new BadRequestException(
         '비밀번호와 비밀번호 확인 값이 일치하지 않습니다.',
       );
     }
 
-    const signupUser = new User(params.email, params.userName, params.password);
+    const signupUser = new User(email, userName, password);
 
     this.signUpUserOutboundPort.excute(signupUser);
   }
