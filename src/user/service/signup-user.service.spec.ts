@@ -20,6 +20,14 @@ class MockSignUpUserOutboundPort implements SignUpUserOutboundPort {
   }
 }
 
+const mockGetUserByEmail = {
+  getUserByEmail: jest.fn(),
+};
+
+const mockGetUserByUserName = {
+  getUserByUserName: jest.fn(),
+};
+
 describe('signUpUserService test', () => {
   test('회원가입 성공', async () => {
     const input = {
@@ -31,7 +39,17 @@ describe('signUpUserService test', () => {
 
     const signUpUserService = new SignUpUserService(
       new MockSignUpUserOutboundPort(),
+      mockGetUserByEmail,
+      mockGetUserByUserName,
     );
+
+    jest
+      .spyOn(mockGetUserByEmail, 'getUserByEmail')
+      .mockReturnValueOnce(Promise.resolve(1));
+
+    jest
+      .spyOn(mockGetUserByUserName, 'getUserByUserName')
+      .mockReturnValue(Promise.resolve(1));
 
     const result = await signUpUserService.excute(input);
 
@@ -48,6 +66,8 @@ describe('signUpUserService test', () => {
 
     const signUpUserService = new SignUpUserService(
       new MockSignUpUserOutboundPort(),
+      mockGetUserByEmail,
+      mockGetUserByUserName,
     );
 
     expect(async () => {
