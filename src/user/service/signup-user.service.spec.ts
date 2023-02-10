@@ -1,4 +1,13 @@
 import { BadRequestException } from '@nestjs/common';
+import { User } from '../entity/user.entity';
+import {
+  GetUserByEmailOutboundPort,
+  GetUserByEmailOutboundPortOutputDto,
+} from '../outbound-port/get-user-by-email.outbound-port';
+import {
+  GetUserByUserNameOutboundPort,
+  GetUserByUserNameOutboundPortOutputDto,
+} from '../outbound-port/get-user-by-username.outbound-port';
 import {
   SignUpUserOutboundPort,
   SignUpUserOutboundPortInputDto,
@@ -20,13 +29,31 @@ class MockSignUpUserOutboundPort implements SignUpUserOutboundPort {
   }
 }
 
-const mockGetUserByEmail = {
-  getUserByEmail: jest.fn(),
-};
+class MockGetUserByEmailOutboundPort implements GetUserByEmailOutboundPort {
+  private readonly result: GetUserByEmailOutboundPortOutputDto;
 
-const mockGetUserByUserName = {
-  getUserByUserName: jest.fn(),
-};
+  constructor(result: GetUserByEmailOutboundPortOutputDto) {
+    this.result = result;
+  }
+
+  async getUserByEmail(email: string): Promise<User> {
+    return this.result === null ? null : this.result;
+  }
+}
+
+class MockGetUserByUserNameOutboundPort
+  implements GetUserByUserNameOutboundPort
+{
+  private readonly result: GetUserByUserNameOutboundPortOutputDto;
+
+  constructor(result: GetUserByEmailOutboundPortOutputDto) {
+    this.result = result;
+  }
+
+  async getUserByUserName(userName: string): Promise<User> {
+    return this.result === null ? null : this.result;
+  }
+}
 
 describe('signUpUserService test', () => {
   test('회원가입 성공', async () => {
@@ -39,17 +66,9 @@ describe('signUpUserService test', () => {
 
     const signUpUserService = new SignUpUserService(
       new MockSignUpUserOutboundPort(),
-      mockGetUserByEmail,
-      mockGetUserByUserName,
+      new MockGetUserByEmailOutboundPort(null),
+      new MockGetUserByUserNameOutboundPort(null),
     );
-
-    jest
-      .spyOn(mockGetUserByEmail, 'getUserByEmail')
-      .mockReturnValueOnce(Promise.resolve(1));
-
-    jest
-      .spyOn(mockGetUserByUserName, 'getUserByUserName')
-      .mockReturnValue(Promise.resolve(1));
 
     const result = await signUpUserService.excute(input);
 
@@ -66,8 +85,8 @@ describe('signUpUserService test', () => {
 
     const signUpUserService = new SignUpUserService(
       new MockSignUpUserOutboundPort(),
-      mockGetUserByEmail,
-      mockGetUserByUserName,
+      new MockGetUserByEmailOutboundPort(null),
+      new MockGetUserByUserNameOutboundPort(null),
     );
 
     expect(async () => {
