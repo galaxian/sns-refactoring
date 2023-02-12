@@ -14,6 +14,6 @@ export class SignUpUserController {
 
   @Post('/users/signup')
   async handle(@Body() request: SignUpUserInboundPortInputDto) {
-    this.signUpUserInboundPort.excute(request);
+    return this.signUpUserInboundPort.excute(request);
   }
 }
