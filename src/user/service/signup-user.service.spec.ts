@@ -64,15 +64,25 @@ describe('signUpUserService test', () => {
       checkPassword: 'abcd1234',
     };
 
+    const saveUser = {
+      id: BigInt(1),
+      email: 'abcd@gmail.com',
+      userName: 'abcd',
+      password: 'hash',
+    };
+
+    const getUserByEmail = null;
+    const getUserByUserName = null;
+
     const signUpUserService = new SignUpUserService(
-      new MockSignUpUserOutboundPort(),
-      new MockGetUserByEmailOutboundPort(null),
-      new MockGetUserByUserNameOutboundPort(null),
+      new MockSignUpUserOutboundPort(saveUser),
+      new MockGetUserByEmailOutboundPort(getUserByEmail),
+      new MockGetUserByUserNameOutboundPort(getUserByUserName),
     );
 
     const result = await signUpUserService.excute(input);
 
-    expect(result).toBe(void 0);
+    expect(result).toEqual(BigInt(1));
   });
 
   test('비밀번호 체크 실패', async () => {
@@ -83,10 +93,20 @@ describe('signUpUserService test', () => {
       checkPassword: 'abcd12345',
     };
 
+    const saveUser = {
+      id: BigInt(1),
+      email: 'abcd@gmail.com',
+      userName: 'abcd',
+      password: 'hash',
+    };
+
+    const getUserByEmail = null;
+    const getUserByUserName = null;
+
     const signUpUserService = new SignUpUserService(
-      new MockSignUpUserOutboundPort(),
-      new MockGetUserByEmailOutboundPort(null),
-      new MockGetUserByUserNameOutboundPort(null),
+      new MockSignUpUserOutboundPort(saveUser),
+      new MockGetUserByEmailOutboundPort(getUserByEmail),
+      new MockGetUserByUserNameOutboundPort(getUserByUserName),
     );
 
     expect(async () => {
