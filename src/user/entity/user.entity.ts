@@ -26,6 +26,21 @@ export class User {
     return user;
   }
 
+  public static toEntityFromORM(ormUser: TypeOrmUser): User {
+    if (ormUser === null) {
+      return null;
+    }
+    const user = new User();
+    user._id = ormUser.id;
+    user._email = ormUser.email;
+    user._userName = ormUser.userName;
+    user._password = ormUser.password;
+    user._createAt = ormUser.createAt;
+    user._updateAt = ormUser.updateAt;
+    user._deleteAt = ormUser.deleteAt;
+    return user;
+  }
+
   get id(): bigint {
     return this._id;
   }
