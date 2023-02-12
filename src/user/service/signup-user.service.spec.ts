@@ -127,13 +127,18 @@ describe('signUpUserService test', () => {
     };
 
     const testUser: User = User.createMockUser(
+      BigInt(2),
+      input.email,
+      input.userName,
+      'hash',
+    );
+
+    const getUserByEmail = User.createMockUser(
       BigInt(1),
       input.email,
       'test',
       'hash',
     );
-
-    const getUserByEmail = testUser;
     const getUserByUserName = null;
 
     const signUpUserService = new SignUpUserService(
@@ -142,6 +147,7 @@ describe('signUpUserService test', () => {
       new MockGetUserByUserNameOutboundPort(getUserByUserName),
     );
 
+    expect(getUserByEmail.email).toEqual(testUser.email);
     expect(async () => {
       await signUpUserService.excute(input);
     }).rejects.toThrowError(
@@ -160,14 +166,19 @@ describe('signUpUserService test', () => {
     };
 
     const testUser: User = User.createMockUser(
-      BigInt(1),
-      'test',
+      BigInt(2),
+      input.email,
       input.userName,
       'hash',
     );
 
     const getUserByEmail = null;
-    const getUserByUserName = testUser;
+    const getUserByUserName = User.createMockUser(
+      BigInt(1),
+      'test',
+      input.userName,
+      'hash',
+    );
 
     const signUpUserService = new SignUpUserService(
       new MockSignUpUserOutboundPort(testUser),
@@ -175,6 +186,7 @@ describe('signUpUserService test', () => {
       new MockGetUserByUserNameOutboundPort(getUserByUserName),
     );
 
+    expect(getUserByUserName.userName).toEqual(testUser.userName);
     expect(async () => {
       await signUpUserService.excute(input);
     }).rejects.toThrowError(
