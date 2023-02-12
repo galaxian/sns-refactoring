@@ -8,6 +8,7 @@ import {
   GetUserByUserNameOutboundPort,
   GetUserByUserNameOutboundPortOutputDto,
 } from '../outbound-port/get-user-by-username.outbound-port';
+import { HashPasswordOutboundPort } from '../outbound-port/hash-password.outbound-port';
 import {
   SignUpUserOutboundPort,
   SignUpUserOutboundPortInputDto,
@@ -55,6 +56,18 @@ class MockGetUserByUserNameOutboundPort
   }
 }
 
+class MockBcryptAdapter implements HashPasswordOutboundPort {
+  private readonly result: string;
+
+  constructor(result: string) {
+    this.result = result;
+  }
+
+  async hash(password: string): Promise<string> {
+    return 'hash' + this.result;
+  }
+}
+
 describe('signUpUserService test', () => {
   test('회원가입 성공', async () => {
     const input = {
@@ -78,6 +91,7 @@ describe('signUpUserService test', () => {
       new MockSignUpUserOutboundPort(saveUser),
       new MockGetUserByEmailOutboundPort(getUserByEmail),
       new MockGetUserByUserNameOutboundPort(getUserByUserName),
+      new MockBcryptAdapter('hash'),
     );
 
     const result = await signUpUserService.excute(input);
@@ -107,6 +121,7 @@ describe('signUpUserService test', () => {
       new MockSignUpUserOutboundPort(saveUser),
       new MockGetUserByEmailOutboundPort(getUserByEmail),
       new MockGetUserByUserNameOutboundPort(getUserByUserName),
+      new MockBcryptAdapter('hash'),
     );
 
     expect(async () => {
@@ -145,6 +160,7 @@ describe('signUpUserService test', () => {
       new MockSignUpUserOutboundPort(testUser),
       new MockGetUserByEmailOutboundPort(getUserByEmail),
       new MockGetUserByUserNameOutboundPort(getUserByUserName),
+      new MockBcryptAdapter('hash'),
     );
 
     expect(getUserByEmail.email).toEqual(testUser.email);
@@ -184,6 +200,7 @@ describe('signUpUserService test', () => {
       new MockSignUpUserOutboundPort(testUser),
       new MockGetUserByEmailOutboundPort(getUserByEmail),
       new MockGetUserByUserNameOutboundPort(getUserByUserName),
+      new MockBcryptAdapter('hash'),
     );
 
     expect(getUserByUserName.userName).toEqual(testUser.userName);
