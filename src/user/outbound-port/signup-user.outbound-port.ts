@@ -1,5 +1,3 @@
-import { User } from '../entity/user.entity';
-
 export type SignUpUserOutboundPortInputDto = {
   email: string;
   userName: string;

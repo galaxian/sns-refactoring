@@ -26,16 +26,19 @@ export class SignUpUserRepository
     params: SignUpUserOutboundPortInputDto,
   ): Promise<SignUpUserOutboundPortOutputDto> {
     const user = this.userRepository.create(params);
-    return (await this.userRepository.save(user)).toEntity();
+    const ormUser = await this.userRepository.save(user);
+    return User.toEntityFromORM(ormUser);
   }
 
   async getUserByEmail(email: string): Promise<User> {
-    const getUser = await this.userRepository.findOne({ where: { email } });
-    return getUser === null ? null : getUser.toEntity();
+    const getORMUser = await this.userRepository.findOne({ where: { email } });
+    return User.toEntityFromORM(getORMUser);
   }
 
   async getUserByUserName(userName: string): Promise<User> {
-    const getUser = await this.userRepository.findOne({ where: { userName } });
-    return getUser === null ? null : getUser.toEntity();
+    const getORMUser = await this.userRepository.findOne({
+      where: { userName },
+    });
+    return User.toEntityFromORM(getORMUser);
   }
 }
