@@ -150,4 +150,37 @@ describe('signUpUserService test', () => {
       }),
     );
   });
+
+  test('중복된 닉네임으로 회원가입', async () => {
+    const input = {
+      email: 'abcd@gmail.com',
+      userName: 'abcd',
+      password: 'abcd1234',
+      checkPassword: 'abcd1234',
+    };
+
+    const testUser: User = User.createMockUser(
+      BigInt(1),
+      'test',
+      input.userName,
+      'hash',
+    );
+
+    const getUserByEmail = null;
+    const getUserByUserName = testUser;
+
+    const signUpUserService = new SignUpUserService(
+      new MockSignUpUserOutboundPort(testUser),
+      new MockGetUserByEmailOutboundPort(getUserByEmail),
+      new MockGetUserByUserNameOutboundPort(getUserByUserName),
+    );
+
+    expect(async () => {
+      await signUpUserService.excute(input);
+    }).rejects.toThrowError(
+      new BadRequestException({
+        message: '이미 등록된 사용자명입니다.',
+      }),
+    );
+  });
 });
