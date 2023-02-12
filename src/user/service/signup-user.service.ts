@@ -31,11 +31,6 @@ export class SignUpUserService implements SignUpUserInboundPort {
     params: SignUpUserInboundPortInputDto,
   ): Promise<SignUpUserInboundPortOutputDto> {
     const { email, userName, password, checkPassword } = params;
-    if (this.isPasswordValidate(password, checkPassword)) {
-      throw new BadRequestException(
-        '비밀번호와 비밀번호 확인 값이 일치하지 않습니다.',
-      );
-    }
 
     const getUserByEmail = await this.getUserByEmailOutboundPort.getUserByEmail(
       email,
@@ -58,9 +53,5 @@ export class SignUpUserService implements SignUpUserInboundPort {
     );
 
     return (await this.signUpUserOutboundPort.excute(signupUser)).id;
-  }
-
-  private isPasswordValidate(password: string, checkPassword: string): boolean {
-    return password !== checkPassword;
   }
 }

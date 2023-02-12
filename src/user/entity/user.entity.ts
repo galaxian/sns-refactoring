@@ -17,7 +17,9 @@ export class User {
     checkPassword: string,
   ): User {
     if (password !== checkPassword) {
-      throw new BadRequestException();
+      throw new BadRequestException(
+        '비밀번호와 비밀번호 확인 값이 일치하지 않습니다.',
+      );
     }
     const user = new User();
     user._email = email;
