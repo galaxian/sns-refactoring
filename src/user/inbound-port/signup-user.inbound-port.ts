@@ -5,7 +5,7 @@ export type SignUpUserInboundPortInputDto = {
   checkPassword: string;
 };
 
-export type SignUpUserInboundPortOutputDto = void;
+export type SignUpUserInboundPortOutputDto = bigint;
 
 export const SIGNUP_USER_INBOUND_PORT = 'SIGNUP_USER_INBOUND_PORT' as const;
 

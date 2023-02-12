@@ -26,7 +26,7 @@ export class SignUpUserRepository
     params: SignUpUserOutboundPortInputDto,
   ): Promise<SignUpUserOutboundPortOutputDto> {
     const user = this.userRepository.create(params);
-    await this.userRepository.save(user);
+    return (await this.userRepository.save(user)).toEntity();
   }
 
   async getUserByEmail(email: string): Promise<User> {
