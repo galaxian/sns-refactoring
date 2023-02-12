@@ -84,4 +84,8 @@ export class User {
   get deleteAt(): Date {
     return this._deleteAt;
   }
+
+  public hashPassword(hashPassword: string): void {
+    this._password = hashPassword;
+  }
 }
