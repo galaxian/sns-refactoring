@@ -1,3 +1,6 @@
+import { BadRequestException } from '@nestjs/common';
+import { TypeOrmUser } from './typeorm-user.entity';
+
 export class User {
   private _id: bigint;
   private _email: string;
@@ -7,10 +10,20 @@ export class User {
   private _updateAt: Date;
   private _deleteAt: Date;
 
-  constructor(email: string, userName: string, password: string) {
-    this._email = email;
-    this._userName = userName;
-    this._password = password;
+  public static createSignUpUser(
+    email: string,
+    userName: string,
+    password: string,
+    checkPassword: string,
+  ): User {
+    if (password !== checkPassword) {
+      throw new BadRequestException();
+    }
+    const user = new User();
+    user._email = email;
+    user._userName = userName;
+    user._password = password;
+    return user;
   }
 
   get id(): bigint {

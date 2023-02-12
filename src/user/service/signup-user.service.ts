@@ -50,9 +50,14 @@ export class SignUpUserService implements SignUpUserInboundPort {
       throw new BadRequestException('이미 등록된 사용자명입니다.');
     }
 
-    const signupUser = new User(email, userName, password);
+    const signupUser = User.createSignUpUser(
+      email,
+      userName,
+      password,
+      checkPassword,
+    );
 
-    this.signUpUserOutboundPort.excute(signupUser);
+    return (await this.signUpUserOutboundPort.excute(signupUser)).id;
   }
 
   private isPasswordValidate(password: string, checkPassword: string): boolean {
