@@ -14,6 +14,10 @@ import {
   GET_USER_BY_USERNAME_OUTBOUND_PORT,
 } from '../outbound-port/get-user-by-username.outbound-port';
 import {
+  HashPasswordOutboundPort,
+  HASH_PASSWORD_OUTBOUND_PORT,
+} from '../outbound-port/hash-password.outbound-port';
+import {
   SignUpUserOutboundPort,
   SIGNUP_USER_OUTBOUND_PORT,
 } from '../outbound-port/signup-user.outbound-port';
@@ -26,6 +30,8 @@ export class SignUpUserService implements SignUpUserInboundPort {
     private readonly getUserByEmailOutboundPort: GetUserByEmailOutboundPort,
     @Inject(GET_USER_BY_USERNAME_OUTBOUND_PORT)
     private readonly getUserByUserNameOutboundPort: GetUserByUserNameOutboundPort,
+    @Inject(HASH_PASSWORD_OUTBOUND_PORT)
+    private readonly hashPasswordOutboundPort: HashPasswordOutboundPort,
   ) {}
   async excute(
     params: SignUpUserInboundPortInputDto,
@@ -51,6 +57,12 @@ export class SignUpUserService implements SignUpUserInboundPort {
       password,
       checkPassword,
     );
+
+    const hashPassword: string = await this.hashPasswordOutboundPort.hash(
+      password,
+    );
+
+    signupUser.hashPassword(hashPassword);
 
     return (await this.signUpUserOutboundPort.excute(signupUser)).id;
   }
