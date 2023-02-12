@@ -43,6 +43,20 @@ export class User {
     return user;
   }
 
+  public static createMockUser(
+    id: bigint,
+    email: string,
+    userName: string,
+    password: string,
+  ) {
+    const user = new User();
+    user._id = id;
+    user._email = email;
+    user._userName = userName;
+    user._password = password;
+    return user;
+  }
+
   get id(): bigint {
     return this._id;
   }
