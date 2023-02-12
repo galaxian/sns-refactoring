@@ -117,4 +117,37 @@ describe('signUpUserService test', () => {
       }),
     );
   });
+
+  test('중복된 이메일로 회원가입', async () => {
+    const input = {
+      email: 'abcd@gmail.com',
+      userName: 'abcd',
+      password: 'abcd1234',
+      checkPassword: 'abcd1234',
+    };
+
+    const testUser: User = User.createMockUser(
+      BigInt(1),
+      input.email,
+      'test',
+      'hash',
+    );
+
+    const getUserByEmail = testUser;
+    const getUserByUserName = null;
+
+    const signUpUserService = new SignUpUserService(
+      new MockSignUpUserOutboundPort(testUser),
+      new MockGetUserByEmailOutboundPort(getUserByEmail),
+      new MockGetUserByUserNameOutboundPort(getUserByUserName),
+    );
+
+    expect(async () => {
+      await signUpUserService.excute(input);
+    }).rejects.toThrowError(
+      new BadRequestException({
+        message: '이미 등록된 이메일입니다.',
+      }),
+    );
+  });
 });
