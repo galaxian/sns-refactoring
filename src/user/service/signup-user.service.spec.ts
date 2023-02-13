@@ -1,39 +1,28 @@
 import { BadRequestException } from '@nestjs/common';
 import { User } from '../entity/user.entity';
-import {
-  GetUserByEmailOutboundPort,
-  GetUserByEmailOutboundPortOutputDto,
-} from '../outbound-port/get-user-by-email.outbound-port';
-import {
-  GetUserByUserNameOutboundPort,
-  GetUserByUserNameOutboundPortOutputDto,
-} from '../outbound-port/get-user-by-username.outbound-port';
+import { SignUpUserInboundPortInputDto } from '../inbound-port/dto/req/signup-user.inbound-port.req.dto';
+import { GetUserByEmailOutboundPort } from '../outbound-port/get-user-by-email.outbound-port';
+import { GetUserByUserNameOutboundPort } from '../outbound-port/get-user-by-username.outbound-port';
 import { HashPasswordOutboundPort } from '../outbound-port/hash-password.outbound-port';
-import {
-  SignUpUserOutboundPort,
-  SignUpUserOutboundPortInputDto,
-  SignUpUserOutboundPortOutputDto,
-} from '../outbound-port/signup-user.outbound-port';
+import { SignUpUserOutboundPort } from '../outbound-port/signup-user.outbound-port';
 import { SignUpUserService } from './signup-user.service';
 
 class MockSignUpUserOutboundPort implements SignUpUserOutboundPort {
-  private readonly result: SignUpUserOutboundPortOutputDto;
+  private readonly result: User;
 
-  constructor(result: SignUpUserOutboundPortOutputDto) {
+  constructor(result: User) {
     this.result = result;
   }
 
-  async excute(
-    params: SignUpUserOutboundPortInputDto,
-  ): Promise<SignUpUserOutboundPortOutputDto> {
+  async excute(params: User): Promise<User> {
     return this.result;
   }
 }
 
 class MockGetUserByEmailOutboundPort implements GetUserByEmailOutboundPort {
-  private readonly result: GetUserByEmailOutboundPortOutputDto;
+  private readonly result: User;
 
-  constructor(result: GetUserByEmailOutboundPortOutputDto) {
+  constructor(result: User) {
     this.result = result;
   }
 
@@ -45,9 +34,9 @@ class MockGetUserByEmailOutboundPort implements GetUserByEmailOutboundPort {
 class MockGetUserByUserNameOutboundPort
   implements GetUserByUserNameOutboundPort
 {
-  private readonly result: GetUserByUserNameOutboundPortOutputDto;
+  private readonly result: User;
 
-  constructor(result: GetUserByEmailOutboundPortOutputDto) {
+  constructor(result: User) {
     this.result = result;
   }
 
@@ -70,19 +59,19 @@ class MockBcryptAdapter implements HashPasswordOutboundPort {
 
 describe('signUpUserService test', () => {
   test('회원가입 성공', async () => {
-    const input = {
-      email: 'abcd@gmail.com',
-      userName: 'abcd',
-      password: 'abcd1234',
-      checkPassword: 'abcd1234',
-    };
+    const input = new SignUpUserInboundPortInputDto(
+      'abcd@gmail.com',
+      'abcd',
+      'abcd1234',
+      'abcd1234',
+    );
 
-    const saveUser = {
-      id: BigInt(1),
-      email: 'abcd@gmail.com',
-      userName: 'abcd',
-      password: 'hash',
-    };
+    const saveUser = User.createMockUser(
+      BigInt(1),
+      'abcd@gmail.com',
+      'abcd',
+      'hash',
+    );
 
     const getUserByEmail = null;
     const getUserByUserName = null;
@@ -96,23 +85,23 @@ describe('signUpUserService test', () => {
 
     const result = await signUpUserService.excute(input);
 
-    expect(result).toEqual(BigInt(1));
+    expect(result.id).toEqual(BigInt(1));
   });
 
   test('비밀번호 체크 실패', async () => {
-    const input = {
-      email: 'abcd@gmail.com',
-      userName: 'abcd',
-      password: 'abcd1234',
-      checkPassword: 'abcd12345',
-    };
+    const input = new SignUpUserInboundPortInputDto(
+      'abcd@gmail.com',
+      'abcd',
+      'abcd1234',
+      'abcd12345',
+    );
 
-    const saveUser = {
-      id: BigInt(1),
-      email: 'abcd@gmail.com',
-      userName: 'abcd',
-      password: 'hash',
-    };
+    const saveUser = User.createMockUser(
+      BigInt(1),
+      'abcd@gmail.com',
+      'abcd',
+      'hash',
+    );
 
     const getUserByEmail = null;
     const getUserByUserName = null;
@@ -134,12 +123,12 @@ describe('signUpUserService test', () => {
   });
 
   test('중복된 이메일로 회원가입', async () => {
-    const input = {
-      email: 'abcd@gmail.com',
-      userName: 'abcd',
-      password: 'abcd1234',
-      checkPassword: 'abcd1234',
-    };
+    const input = new SignUpUserInboundPortInputDto(
+      'abcd@gmail.com',
+      'abcd',
+      'abcd1234',
+      'abcd1234',
+    );
 
     const testUser: User = User.createMockUser(
       BigInt(2),
@@ -174,12 +163,12 @@ describe('signUpUserService test', () => {
   });
 
   test('중복된 닉네임으로 회원가입', async () => {
-    const input = {
-      email: 'abcd@gmail.com',
-      userName: 'abcd',
-      password: 'abcd1234',
-      checkPassword: 'abcd1234',
-    };
+    const input = new SignUpUserInboundPortInputDto(
+      'abcd@gmail.com',
+      'abcd',
+      'abcd1234',
+      'abcd1234',
+    );
 
     const testUser: User = User.createMockUser(
       BigInt(2),
