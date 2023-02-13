@@ -1,7 +1,8 @@
 import { Body, Controller, Inject, Post } from '@nestjs/common';
+import { SignUpUserInboundPortInputDto } from '../inbound-port/dto/req/signup-user.inbound-port.req.dto';
+import { SignUpUserInboundPortOutputDto } from '../inbound-port/dto/res/signup-user.inbound-port.res.dto';
 import {
   SignUpUserInboundPort,
-  SignUpUserInboundPortInputDto,
   SIGNUP_USER_INBOUND_PORT,
 } from '../inbound-port/signup-user.inbound-port';
 
@@ -13,7 +14,9 @@ export class SignUpUserController {
   ) {}
 
   @Post('/users/signup')
-  async handle(@Body() request: SignUpUserInboundPortInputDto) {
+  async handle(
+    @Body() request: SignUpUserInboundPortInputDto,
+  ): Promise<SignUpUserInboundPortOutputDto> {
     return this.signUpUserInboundPort.excute(request);
   }
 }

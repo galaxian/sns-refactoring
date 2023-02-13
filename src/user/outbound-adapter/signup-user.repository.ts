@@ -5,11 +5,7 @@ import { TypeOrmUser } from '../entity/typeorm-user.entity';
 import { User } from '../entity/user.entity';
 import { GetUserByEmailOutboundPort } from '../outbound-port/get-user-by-email.outbound-port';
 import { GetUserByUserNameOutboundPort } from '../outbound-port/get-user-by-username.outbound-port';
-import {
-  SignUpUserOutboundPort,
-  SignUpUserOutboundPortInputDto,
-  SignUpUserOutboundPortOutputDto,
-} from '../outbound-port/signup-user.outbound-port';
+import { SignUpUserOutboundPort } from '../outbound-port/signup-user.outbound-port';
 
 @Injectable()
 export class SignUpUserRepository
@@ -22,9 +18,7 @@ export class SignUpUserRepository
     @InjectRepository(TypeOrmUser)
     private readonly userRepository: Repository<TypeOrmUser>,
   ) {}
-  async excute(
-    params: SignUpUserOutboundPortInputDto,
-  ): Promise<SignUpUserOutboundPortOutputDto> {
+  async excute(params: User): Promise<User> {
     const user = this.userRepository.create(params);
     const ormUser = await this.userRepository.save(user);
     return User.toEntityFromORM(ormUser);

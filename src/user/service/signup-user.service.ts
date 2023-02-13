@@ -1,10 +1,8 @@
 import { BadRequestException, Inject } from '@nestjs/common';
 import { User } from '../entity/user.entity';
-import {
-  SignUpUserInboundPort,
-  SignUpUserInboundPortInputDto,
-  SignUpUserInboundPortOutputDto,
-} from '../inbound-port/signup-user.inbound-port';
+import { SignUpUserInboundPortInputDto } from '../inbound-port/dto/req/signup-user.inbound-port.req.dto';
+import { SignUpUserInboundPortOutputDto } from '../inbound-port/dto/res/signup-user.inbound-port.res.dto';
+import { SignUpUserInboundPort } from '../inbound-port/signup-user.inbound-port';
 import {
   GetUserByEmailOutboundPort,
   GET_USER_BY_EMAIL_OUTBOUND_PORT,
@@ -63,7 +61,9 @@ export class SignUpUserService implements SignUpUserInboundPort {
     );
 
     signupUser.hashPassword(hashPassword);
+    const user: User = await this.signUpUserOutboundPort.excute(signupUser);
 
-    return (await this.signUpUserOutboundPort.excute(signupUser)).id;
+    const result = new SignUpUserInboundPortOutputDto(user);
+    return result;
   }
 }
