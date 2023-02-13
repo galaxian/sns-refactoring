@@ -1,3 +1,4 @@
+import { Expose } from 'class-transformer';
 import {
   IsEmail,
   IsNotEmpty,
@@ -10,22 +11,26 @@ import {
 export class SignUpUserInboundPortInputDto {
   @IsEmail()
   @IsNotEmpty()
+  @Expose({ name: 'email' })
   private readonly _email: string;
 
   @IsNotEmpty()
   @IsString()
   @MinLength(1)
   @MaxLength(10)
+  @Expose({ name: 'userName' })
   private readonly _userName: string;
 
   @IsNotEmpty()
   @IsString()
   @Matches(/^.*(?=^.{10,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$/)
+  @Expose({ name: 'password' })
   private readonly _password: string;
 
   @IsNotEmpty()
   @IsString()
   @Matches(/^.*(?=^.{10,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$/)
+  @Expose({ name: 'checkPassword' })
   private readonly _checkPassword: string;
 
   constructor(
