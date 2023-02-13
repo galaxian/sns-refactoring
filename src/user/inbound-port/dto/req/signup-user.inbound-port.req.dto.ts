@@ -27,4 +27,32 @@ export class SignUpUserInboundPortInputDto {
   @IsString()
   @Matches(/^.*(?=^.{10,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$/)
   private readonly _checkPassword: string;
+
+  constructor(
+    email: string,
+    userName: string,
+    password: string,
+    checkPassword: string,
+  ) {
+    this._email = email;
+    this._userName = userName;
+    this._password = password;
+    this._checkPassword = checkPassword;
+  }
+
+  get email(): string {
+    return this._email;
+  }
+
+  get userName(): string {
+    return this._userName;
+  }
+
+  get password(): string {
+    return this._password;
+  }
+
+  get checkPassword(): string {
+    return this._checkPassword;
+  }
 }
