@@ -34,7 +34,9 @@ export class SignUpUserService implements SignUpUserInboundPort {
   async excute(
     params: SignUpUserInboundPortInputDto,
   ): Promise<SignUpUserInboundPortOutputDto> {
-    const { email, userName, password, checkPassword } = params;
+    const signupUser = params.toEntity();
+
+    const { email, userName, password } = signupUser;
 
     const getUserByEmail = await this.getUserByEmailOutboundPort.getUserByEmail(
       email,
@@ -48,13 +50,6 @@ export class SignUpUserService implements SignUpUserInboundPort {
     if (getUserByUserName) {
       throw new BadRequestException('이미 등록된 사용자명입니다.');
     }
-
-    const signupUser = User.createSignUpUser(
-      email,
-      userName,
-      password,
-      checkPassword,
-    );
 
     const hashPassword: string = await this.hashPasswordOutboundPort.hash(
       password,

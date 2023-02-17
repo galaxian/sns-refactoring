@@ -1,3 +1,4 @@
+import { User } from 'src/user/entity/user.entity';
 import { Expose } from 'class-transformer';
 import {
   IsEmail,
@@ -59,5 +60,14 @@ export class SignUpUserInboundPortInputDto {
 
   get checkPassword(): string {
     return this._checkPassword;
+  }
+
+  public toEntity(): User {
+    return User.createSignUpUser(
+      this._email,
+      this._userName,
+      this._password,
+      this._checkPassword,
+    );
   }
 }
