@@ -9,7 +9,12 @@ import {
   ComparePasswordOutboundPort,
   COMPARE_PASSWORD_OUTBOUND_PORT,
 } from '../outbound-port/compare-password.outbound-port';
+import {
+  CreateJwtOutBoundPort,
+  CREATE_JWT_OUTBOUND_PORT,
+} from '../outbound-port/create-jwt.outbound-port';
 import { SignInUserOutboundPort } from '../outbound-port/signin-user.outbound-port';
+import { Payload } from '../payload/token-payload';
 
 export class SignInUserService implements SignInUserInboundPort {
   constructor(
@@ -17,6 +22,8 @@ export class SignInUserService implements SignInUserInboundPort {
     private readonly signInUserOutboundPort: SignInUserOutboundPort,
     @Inject(COMPARE_PASSWORD_OUTBOUND_PORT)
     private readonly comparePasswordOutboundPort: ComparePasswordOutboundPort,
+    @Inject(CREATE_JWT_OUTBOUND_PORT)
+    private readonly createJwtOutboundPort: CreateJwtOutBoundPort,
   ) {}
   async excute(
     params: SignInUserInboundPortInputDto,
@@ -33,6 +40,10 @@ export class SignInUserService implements SignInUserInboundPort {
       throw new UnauthorizedException();
     }
 
-    return new SignInUserInboundPortOutputDto(undefined);
+    const payload = new Payload(getUser.id);
+
+    const accessToken = await this.createJwtOutboundPort.sign(payload);
+
+    return new SignInUserInboundPortOutputDto(accessToken);
   }
 }
