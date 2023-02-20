@@ -16,6 +16,11 @@ import { SIGNUP_USER_OUTBOUND_PORT } from './outbound-port/signup-user.outbound-
 import { SignUpUserService } from './service/signup-user.service';
 import * as config from 'config';
 import { PassportModule } from '@nestjs/passport';
+import { SignInUserController } from './controller/signin-user.controller';
+import { SIGNIN_USER_INBOUND_PORT } from './inbound-port/signin-user.inbound-port';
+import { SignInUserService } from './service/signin-user.service';
+import { SIGNIN_USER_OUTBOUND_PORT } from './outbound-port/signin-user.outbound-port';
+import { SignInUserRepository } from './outbound-adapter/signin-user.repository';
 
 const jwtConfig = config.get('jwt');
 
@@ -28,7 +33,7 @@ const jwtConfig = config.get('jwt');
     }),
     PassportModule,
   ],
-  controllers: [SignUpUserController],
+  controllers: [SignUpUserController, SignInUserController],
   providers: [
     { provide: SIGNUP_USER_INBOUND_PORT, useClass: SignUpUserService },
     { provide: SIGNUP_USER_OUTBOUND_PORT, useClass: SignUpUserRepository },
@@ -46,6 +51,9 @@ const jwtConfig = config.get('jwt');
     },
     { provide: COMPARE_PASSWORD_OUTBOUND_PORT, useClass: BcryptAdapter },
     { provide: CREATE_JWT_OUTBOUND_PORT, useClass: JwtAdapter },
+
+    { provide: SIGNIN_USER_INBOUND_PORT, useClass: SignInUserService },
+    { provide: SIGNIN_USER_OUTBOUND_PORT, useClass: SignInUserRepository },
   ],
 })
 export class UserModule {}
