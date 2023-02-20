@@ -1,10 +1,7 @@
 import { Inject, UnauthorizedException } from '@nestjs/common';
 import { SignInUserInboundPortInputDto } from '../inbound-port/dto/req/signin-user.inbound-port.req.dto';
 import { SignInUserInboundPortOutputDto } from '../inbound-port/dto/res/signin-user.inbound-port.res.dto';
-import {
-  SignInUserInboundPort,
-  SIGNIN_USER_INBOUND_PORT,
-} from '../inbound-port/signin-user.inbound-port';
+import { SignInUserInboundPort } from '../inbound-port/signin-user.inbound-port';
 import {
   ComparePasswordOutboundPort,
   COMPARE_PASSWORD_OUTBOUND_PORT,
@@ -13,12 +10,15 @@ import {
   CreateJwtOutBoundPort,
   CREATE_JWT_OUTBOUND_PORT,
 } from '../outbound-port/create-jwt.outbound-port';
-import { SignInUserOutboundPort } from '../outbound-port/signin-user.outbound-port';
+import {
+  SignInUserOutboundPort,
+  SIGNIN_USER_OUTBOUND_PORT,
+} from '../outbound-port/signin-user.outbound-port';
 import { Payload } from '../payload/token-payload';
 
 export class SignInUserService implements SignInUserInboundPort {
   constructor(
-    @Inject(SIGNIN_USER_INBOUND_PORT)
+    @Inject(SIGNIN_USER_OUTBOUND_PORT)
     private readonly signInUserOutboundPort: SignInUserOutboundPort,
     @Inject(COMPARE_PASSWORD_OUTBOUND_PORT)
     private readonly comparePasswordOutboundPort: ComparePasswordOutboundPort,
@@ -31,13 +31,13 @@ export class SignInUserService implements SignInUserInboundPort {
     const { email, password } = params;
     const getUser = await this.signInUserOutboundPort.excute(email);
 
-    const isValidPassword = this.comparePasswordOutboundPort.compare(
+    const isValidPassword = await this.comparePasswordOutboundPort.compare(
       password,
       getUser.password,
     );
 
     if (!isValidPassword || !getUser) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('인증되지 않은 유저입니다.');
     }
 
     const payload = new Payload(getUser.id);
