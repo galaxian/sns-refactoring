@@ -11,7 +11,7 @@ export class Payload {
     return this._id;
   }
 
-  public InstanceToPlain() {
+  public instanceToPlain() {
     return instanceToPlain(this);
   }
 }

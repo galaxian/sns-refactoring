@@ -8,6 +8,6 @@ export class JwtAdapter implements CreateJwtOutBoundPort {
   constructor(private readonly jwtService: JwtService) {}
 
   async sign(payload: Payload): Promise<string> {
-    return this.jwtService.sign(payload.InstanceToPlain());
+    return this.jwtService.sign(payload.instanceToPlain());
   }
 }
