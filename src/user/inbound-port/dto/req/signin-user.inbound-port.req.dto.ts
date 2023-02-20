@@ -1,5 +1,16 @@
+import { Expose } from 'class-transformer';
+import { IsEmail, IsNotEmpty, IsString, Matches } from 'class-validator';
+
 export class SignInUserInboundPortInputDto {
+  @IsNotEmpty()
+  @IsEmail()
+  @Expose({ name: 'email' })
   private readonly _email: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Matches(/^.*(?=^.{10,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$/)
+  @Expose({ name: 'password' })
   private readonly _password: string;
 
   constructor(email: string, password: string) {
