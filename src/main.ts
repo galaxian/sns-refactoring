@@ -7,7 +7,7 @@ const serverConfig = config.get('server');
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   const port = serverConfig.port;
   await app.listen(port);
 }
