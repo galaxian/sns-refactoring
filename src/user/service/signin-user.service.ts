@@ -44,7 +44,7 @@ export class SignInUserService implements SignInUserInboundPort {
       getUser.password,
     );
 
-    if (!isValidPassword || !getUser) {
+    if (!isValidPassword) {
       throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
     }
 
