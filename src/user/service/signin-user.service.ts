@@ -1,4 +1,8 @@
-import { Inject, UnauthorizedException } from '@nestjs/common';
+import {
+  Inject,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { SignInUserInboundPortInputDto } from '../inbound-port/dto/req/signin-user.inbound-port.req.dto';
 import { SignInUserInboundPortOutputDto } from '../inbound-port/dto/res/signin-user.inbound-port.res.dto';
 import { SignInUserInboundPort } from '../inbound-port/signin-user.inbound-port';
@@ -30,6 +34,10 @@ export class SignInUserService implements SignInUserInboundPort {
   ): Promise<SignInUserInboundPortOutputDto> {
     const { email, password } = params;
     const getUser = await this.signInUserOutboundPort.excute(email);
+
+    if (!getUser) {
+      throw new NotFoundException('존재하지 않는 사용자입니다.');
+    }
 
     const isValidPassword = await this.comparePasswordOutboundPort.compare(
       password,
