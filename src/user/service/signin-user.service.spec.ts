@@ -1,8 +1,11 @@
 import { User } from '../entity/user.entity';
+import { SignInUserInboundPortInputDto } from '../inbound-port/dto/req/signin-user.inbound-port.req.dto';
+import { SignInUserInboundPortOutputDto } from '../inbound-port/dto/res/signin-user.inbound-port.res.dto';
 import { ComparePasswordOutboundPort } from '../outbound-port/compare-password.outbound-port';
 import { CreateJwtOutBoundPort } from '../outbound-port/create-jwt.outbound-port';
 import { SignInUserOutboundPort } from '../outbound-port/signin-user.outbound-port';
 import { Payload } from '../payload/token-payload';
+import { SignInUserService } from './signin-user.service';
 
 class MockSignInUserOutboundPort implements SignInUserOutboundPort {
   private readonly result: User;
@@ -24,10 +27,7 @@ class MockComparePasswordOutboundPort implements ComparePasswordOutboundPort {
   }
 
   async compare(password: string, checkPassword: string): Promise<boolean> {
-    if ('hash' + password === checkPassword) {
-      return true;
-    }
-    return false;
+    return this.result;
   }
 }
 
@@ -42,3 +42,33 @@ class MockCreateJwtOutBoundPort implements CreateJwtOutBoundPort {
     return this.result;
   }
 }
+
+describe('sigInUserService test', () => {
+  test('로그인 성공', async () => {
+    const input = new SignInUserInboundPortInputDto(
+      'abcd1234@gmail.com',
+      'abcd1234!!',
+    );
+
+    const getUser = User.createMockUser(
+      BigInt(1),
+      input.email,
+      'testUserName',
+      'hash' + input.password,
+    );
+
+    const isEqualHashPassword = true;
+    const createJwt = 'jwt';
+
+    const signInUserService = new SignInUserService(
+      new MockSignInUserOutboundPort(getUser),
+      new MockComparePasswordOutboundPort(isEqualHashPassword),
+      new MockCreateJwtOutBoundPort(createJwt),
+    );
+
+    const result: SignInUserInboundPortOutputDto =
+      await signInUserService.excute(input);
+
+    expect(result.accessToken).toEqual(createJwt);
+  });
+});
