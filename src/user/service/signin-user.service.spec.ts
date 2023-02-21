@@ -1,3 +1,4 @@
+import { NotFoundException } from '@nestjs/common';
 import { User } from '../entity/user.entity';
 import { SignInUserInboundPortInputDto } from '../inbound-port/dto/req/signin-user.inbound-port.req.dto';
 import { SignInUserInboundPortOutputDto } from '../inbound-port/dto/res/signin-user.inbound-port.res.dto';
@@ -70,5 +71,29 @@ describe('sigInUserService test', () => {
       await signInUserService.excute(input);
 
     expect(result.accessToken).toEqual(createJwt);
+  });
+
+  test('email 조회 불가 로그인 실패', async () => {
+    const input = new SignInUserInboundPortInputDto(
+      'abcd1234@gmail.com',
+      'abcd1234!!',
+    );
+
+    const getUser = null;
+
+    const isEqualHashPassword = true;
+    const createJwt = 'jwt';
+
+    const signInUserService = new SignInUserService(
+      new MockSignInUserOutboundPort(getUser),
+      new MockComparePasswordOutboundPort(isEqualHashPassword),
+      new MockCreateJwtOutBoundPort(createJwt),
+    );
+
+    expect(async () => {
+      await signInUserService.excute(input);
+    }).rejects.toThrowError(
+      new NotFoundException('존재하지 않는 사용자입니다.'),
+    );
   });
 });
